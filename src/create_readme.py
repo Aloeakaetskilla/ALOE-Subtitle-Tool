@@ -66,6 +66,9 @@ def create_guide(output_path):
 
     doc.add_heading('第 1 步：启动软件', level=2)
     doc.add_paragraph('双击「ALOE字幕提取软件.exe」即可启动，无需安装。')
+    doc.add_paragraph('')
+    doc.add_paragraph('macOS 用户注意：首次运行前请先双击「修复macOS权限.sh」修复权限，'
+                      '否则系统会提示无法打开（因为应用未签名）。运行脚本时需要输入开机密码。')
 
     doc.add_heading('第 2 步：输入视频链接', level=2)
     doc.add_paragraph(

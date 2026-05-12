@@ -1,0 +1,36 @@
+#!/bin/bash
+# ALOE 字幕提取软件 - macOS 权限修复脚本
+# 双击运行此脚本即可解除安全限制
+
+echo "=========================================="
+echo "  ALOE 字幕提取软件 - macOS 权限修复"
+echo "=========================================="
+echo ""
+
+# 获取脚本所在目录
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+APP_DIR="$SCRIPT_DIR"
+
+echo "正在修复权限，请输入开机密码（输入时不会显示）..."
+echo ""
+
+# 移除所有文件的隔离属性
+xattr -cr "$APP_DIR"
+
+# 单独处理可执行文件，确保有执行权限
+chmod +x "$APP_DIR/ALOE字幕提取软件" 2>/dev/null
+chmod +x "$APP_DIR/yt-dlp" 2>/dev/null
+chmod +x "$APP_DIR/ffmpeg" 2>/dev/null
+
+# 递归修复 _internal 目录下所有 .so .dylib 文件
+find "$APP_DIR/_internal" -name "*.so" -exec xattr -cr {} \; 2>/dev/null
+find "$APP_DIR/_internal" -name "*.dylib" -exec xattr -cr {} \; 2>/dev/null
+find "$APP_DIR/_internal" -name "*.so" -exec chmod +x {} \; 2>/dev/null
+find "$APP_DIR/_internal" -name "*.dylib" -exec chmod +x {} \; 2>/dev/null
+
+echo "=========================================="
+echo "  修复完成！"
+echo "  现在双击「ALOE字幕提取软件」即可运行"
+echo "=========================================="
+echo ""
+read -p "按回车键关闭此窗口..."
