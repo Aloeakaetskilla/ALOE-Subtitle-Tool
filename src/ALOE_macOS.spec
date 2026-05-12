@@ -3,20 +3,35 @@
 
 import os
 import sys
+import glob
 
 block_cipher = None
 app_dir = os.path.dirname(os.path.abspath(SPEC))
 parent_dir = os.path.dirname(app_dir)
 
+# 自动查找 faster_whisper/assets 路径（兼容不同平台）
+_fw_assets = None
+for pattern in [
+    os.path.join(sys.prefix, '**', 'faster_whisper', 'assets'),
+    os.path.join(sys.prefix, 'lib', '**', 'faster_whisper', 'assets'),
+]:
+    matches = glob.glob(pattern, recursive=True)
+    if matches:
+        _fw_assets = matches[0]
+        break
+
+_datas = [
+    (os.path.join(parent_dir, 'yt-dlp'), '.'),
+    (os.path.join(parent_dir, 'ffmpeg'), '.'),
+]
+if _fw_assets:
+    _datas.append((_fw_assets, 'faster_whisper/assets'))
+
 a = Analysis(
     ['main.py'],
     pathex=[app_dir],
     binaries=[],
-    datas=[
-        (os.path.join(parent_dir, 'yt-dlp'), '.'),
-        (os.path.join(parent_dir, 'ffmpeg'), '.'),
-        (os.path.join(sys.prefix, 'Lib', 'site-packages', 'faster_whisper', 'assets'), 'faster_whisper/assets'),
-    ],
+    datas=_datas,
     hiddenimports=[
         'translators',
         'docx',
@@ -66,7 +81,7 @@ exe = EXE(
     console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
-    target_arch='universal2',
+    target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
     icon=None,
