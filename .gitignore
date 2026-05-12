@@ -1,0 +1,27 @@
+# Build outputs
+dist/
+build/
+*.spec.bak
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Binaries (built by CI)
+_internal/
+ALOE字幕提取软件.exe
+ALOE字幕提取软件
+ffmpeg.exe
+ffmpeg
+yt-dlp.exe
+yt-dlp
+
+# Temp files
+*.mp4
+*.wav
+*.m4a
+*.webm
+*.opus
+~$*
+*.docx
