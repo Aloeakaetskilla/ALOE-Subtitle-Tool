@@ -44,18 +44,22 @@ jobs:
           Copy-Item "yt-dlp.exe" "src/dist/ALOE字幕提取软件/"
           Copy-Item "ffmpeg.exe" "src/dist/ALOE字幕提取软件/"
 
+      - name: Zip Windows build
+        run: |
+          Compress-Archive -Path "src/dist/ALOE字幕提取软件/*" -DestinationPath "ALOE-Windows.zip"
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: ALOE-Windows
-          path: src/dist/ALOE字幕提取软件/
+          path: ALOE-Windows.zip
 
   build-macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python (Universal2)
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -87,8 +91,49 @@ jobs:
           cp yt-dlp "src/dist/ALOE字幕提取软件/"
           cp ffmpeg "src/dist/ALOE字幕提取软件/"
 
+      - name: Zip macOS build
+        run: |
+          cd src/dist && zip -r ../../ALOE-macOS.zip "ALOE字幕提取软件"
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: ALOE-macOS
-          path: src/dist/ALOE字幕提取软件/
+          path: ALOE-macOS.zip
+
+  release:
+    needs: [build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: success()
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: ALOE 字幕提取软件 v${{ github.run_number }}
+          body: |
+            ## ALOE 字幕提取软件
+
+            - 支持 12 种语言语音识别
+            - 自动翻译 + DOCX 导出
+            - 支持 YouTube / TikTok 等平台
+
+            ### 下载说明
+            - **ALOE-Windows.zip** — Windows 版，解压后双击 .exe 运行
+            - **ALOE-macOS.zip** — macOS 版（Apple Silicon），解压后双击运行，首次打开如提示安全警告请右键→打开
+          files: |
+            artifacts/ALOE-Windows/ALOE-Windows.zip
+            artifacts/ALOE-macOS/ALOE-macOS.zip
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
