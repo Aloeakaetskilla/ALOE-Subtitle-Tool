@@ -90,8 +90,8 @@ jobs:
         run: |
           cp yt-dlp "src/dist/ALOE字幕提取软件/"
           cp ffmpeg "src/dist/ALOE字幕提取软件/"
-          cp src/修复macOS权限.sh "src/dist/ALOE字幕提取软件/"
-          chmod +x "src/dist/ALOE字幕提取软件/修复macOS权限.sh"
+          cp src/修复macOS权限.command "src/dist/ALOE字幕提取软件/"
+          chmod +x "src/dist/ALOE字幕提取软件/修复macOS权限.command"
 
       - name: Zip macOS build
         run: |
